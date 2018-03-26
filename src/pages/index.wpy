@@ -1,0 +1,107 @@
+<style lang="less" scoped>
+.container {
+  .label /deep/ {
+    .label {
+      background: red;
+    }
+  }
+}
+</style>
+<template>
+  <view class="container">
+    <form ref="form" bindsubmit="formSubmit" bindreset="formReset">
+      <anyiInput name="userName" module="text" class="label" placeholder="请输入" label="身份证"></anyiInput>
+      <button @tap="asyncAdd" size="mini">async+</button>
+      <button @tap="asyncSub" size="mini">async-</button>
+      <view class="btn-area">
+        <button formType="submit">Submit</button>
+        <button formType="reset">Reset</button>
+      </view>
+    </form>
+    <text>{{text}}</text>
+
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy';
+import { connect } from 'wepy-redux';
+import testMixin from '../mixins/test';
+import { asyncAdd, asyncSub } from '../store/actions';
+import anyiInput from '../components/anyiInput';
+
+@connect(
+  {
+    num(state) {
+      return state.counter.num;
+    },
+    asyncNum(state) {
+      return state.counter.asyncNum;
+    },
+    sumNum(state) {
+      return state.counter.num + state.counter.asyncNum;
+    }
+  },
+  {
+    asyncAdd,
+    asyncSub
+  }
+)
+export default class Index extends wepy.page {
+  config = {
+    navigationBarTitleText: 'test'
+  };
+  components = {
+    anyiInput: anyiInput
+  };
+
+  mixins = [testMixin];
+
+  data = {
+    text: '121212312321',
+    userInfo: {},
+    ruls: {
+      //自定义表单校验规则
+      userName: {
+        required: true,
+        msg: '请输入用户姓名',
+        valid: {
+          Regex: /^[0-9]{1,3}$/,
+          errMsg: '用户名格式错误'
+        }
+      }
+    }
+  };
+  watch = {
+    text(newVal, oldVal) {
+      console.log(newVal, oldVal);
+    }
+  };
+  computed = {
+    now() {
+      return +new Date();
+    }
+  };
+  methods = {
+    formSubmit: function(e) {
+      var result = this.validate(e.detail.value);
+    },
+    formReset: function() {
+      this.text = '';
+      console.log('form发生了reset事件');
+      this.$apply();
+    },
+    handleViewTap() {
+      wepy.navigateTo({
+        url: 'pages/Login'
+      });
+    }
+  };
+
+  events = {
+    'index-emit': (...args) => {}
+  };
+
+  onLoad() {}
+}
+</script>

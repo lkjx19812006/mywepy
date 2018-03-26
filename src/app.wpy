@@ -1,0 +1,97 @@
+<style lang="less">
+.container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+}
+</style>
+
+<script>
+import wepy from 'wepy';
+import http from './common/httpServer';
+
+import 'wepy-async-function';
+import { setStore } from 'wepy-redux';
+import configStore from './store';
+const store = configStore();
+setStore(store);
+
+export default class extends wepy.app {
+  config = {
+    pages: ['pages/index', 'pages/login', 'pages/set'],
+    window: {
+      backgroundTextStyle: 'light',
+      navigationBarBackgroundColor: '#fff',
+      navigationBarTitleText: 'WeChat',
+      navigationBarTextStyle: 'black'
+    },
+    tabBar: {
+      color: '#dddddd',
+      selectedColor: '#161616',
+      borderStyle: 'white',
+      backgroundColor: '#ffffff',
+      list: [
+        {
+          pagePath: 'pages/index',
+          // iconPath: 'images/zunxuan.png',
+          // selectedIconPath: 'images/zunxuan_active.png',
+          text: '首页'
+        },
+        {
+          pagePath: 'pages/login',
+          // iconPath: 'images/zunxuan.png',
+          // selectedIconPath: 'images/zunxuan_active.png',
+          text: '登录'
+        },
+        {
+          pagePath: 'pages/set',
+          // iconPath: 'images/my.png',
+          // selectedIconPath: 'images/my_active.png',
+          text: '设置'
+        }
+      ]
+    }
+  };
+
+  globalData = {
+    userInfo: null
+  };
+
+  constructor() {
+    super();
+    //修复小程序请求并发问题
+    this.use('requestfix');
+    //使用 wepy.xxx 的方式请求小程序原生API 都将Promise 化
+    this.use('promisify');
+  }
+
+  onLaunch() {
+    this.testAsync();
+  }
+
+  sleep(s) {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        resolve('promise resolved');
+      }, s * 1000);
+    });
+  }
+
+  async testAsync() {
+    var data = await http.fetch({
+      url: '/addData',
+      loading: true,
+      method: 'get',
+      data: { name: 'yinq', height: '12212' }
+    });
+    console.log(data);
+  }
+
+ 
+
+
+}
+</script>

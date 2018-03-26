@@ -1,0 +1,112 @@
+<style lang="less" scoped>
+.anyiInput {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  .label {
+    font-size: 32rpx;
+    line-height: 88rpx;
+    height: 88rpx;
+    padding: 0 30rpx;
+    color: #898989;
+    flex: 0 0 auto;
+  }
+  .input::placeholder {
+    font-size: 32rpx;
+    color: #898989;
+    outline: none;
+  }
+  .input {
+    height: 88rpx;
+    font-size: 32rpx;
+    line-height: 88rpx;
+    color: #666;
+    flex: 1;
+    margin: 0 30rpx;
+  }
+}
+</style>
+<template>
+  <view class="anyiInput">
+    <text class="label" wx:if="label">{{label}}</text>
+    <input value="{{value}}" name="{{name}}" @input="changeInput" class="input" type="{{type}}" password="{{password}}" placeholder="{{placeholder}}" />
+  </view>
+</template>
+<script>
+import wepy from 'wepy';
+//定义声明组件
+export default class Counter extends wepy.component {
+  props = {
+    name: {
+      type: [String],
+      default: ''
+    },
+    label: {
+      type: [String],
+      default: ''
+    },
+    module: {
+      //双向绑定的键
+      type: [String],
+      default: ''
+    },
+    placeholder: {
+      type: [String],
+      default: '请输入'
+    },
+    type: {
+      type: [String],
+      default: 'text'
+    },
+    password: {
+      type: [Boolean],
+      default: false
+    }
+  };
+  computed = {
+    //动态计算值 实现父传值给子
+    value() {
+      if (this.module.indexOf('.') > -1) {
+        var keys = this.module.split('.');
+        switch (keys.length) {
+          case 2:
+            return this.$parent[keys[0]][keys[1]];
+            break;
+          case 3:
+            return this.$parent[keys[0]][keys[1]][keys[2]];
+            break;
+          case 4:
+            return this.$parent[keys[0]][keys[1]][keys[2]][keys[3]];
+            break;
+          case 5:
+            return this.$parent[keys[0]][keys[1]][keys[2]][keys[3]][keys[4]];
+            break;
+          case 6:
+            return this.$parent[keys[0]][keys[1]][keys[2]][keys[3]][keys[4]][
+              keys[5]
+            ];
+            break;
+        }
+      } else {
+        return this.$parent[this.module];
+      }
+
+    }
+  };
+  data = {};
+  events = {};
+  watch = {};
+  methods = {
+    changeInput(events) {
+      //当input值改变的时候 动态去改变父组件的值 实现子传值给父  基本实现双向绑定
+      this.$emit('input', {
+        val: events.detail.value, //当前input的值
+        key: this.module //双向绑定的键
+      });
+    }
+  };
+}
+</script>

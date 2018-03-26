@@ -1,0 +1,40 @@
+<style lang="less">
+
+</style>
+<template>
+  <view>
+    <text>设置</text>
+  </view>
+</template>
+<script>
+import wepy from 'wepy';
+import testMixin from '../mixins/test';
+export default class Set extends wepy.page {
+  config = {
+    navigationBarTitleText: '设置'
+  };
+  components = {};
+
+  mixins = [testMixin];
+
+  data = {
+    userInfo: {}
+  };
+
+  computed = {
+    now() {
+      return +new Date();
+    }
+  };
+
+  methods = {
+    handleViewTap() {
+      console.log('asdfasd');
+    }
+  };
+
+  events = {};
+
+  onLoad() {}
+}
+</script>
